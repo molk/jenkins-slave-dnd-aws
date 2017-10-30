@@ -5,6 +5,9 @@ MAINTAINER Marcus Olk <m@rcus-olk.net>
 ENV JENKINS_HOME /home/jenkins
 ENV JENKINS_REMOTNG_VERSION 3.9
 
+ENV JENKINS_GROUP 1000
+ENV DOCKER_GROUP  497
+
 ENV DOCKER_HOST unix:///var/run/docker.sock
 
 # install required packages
@@ -21,9 +24,9 @@ RUN apk --update add \
 RUN pip install --upgrade pip setuptools
 
 # add jenkins user and allow jenkins user to run as root
-RUN addgroup -g 1005 -S docker \
-    && addgroup -g 1000 -S jenkins \
-    && adduser -G jenkins -D -h $JENKINS_HOME -s /bin/bash -u 1000 jenkins \
+RUN    addgroup -g $DOCKER_GROUP  -S docker \
+    && addgroup -g $JENKINS_GROUP -S jenkins \
+    && adduser -G jenkins -D -h $JENKINS_HOME -s /bin/bash -u $JENKINS_GROUP jenkins \
     && adduser jenkins docker \
     && passwd -u jenkins \
     && chmod a+rwx $JENKINS_HOME \

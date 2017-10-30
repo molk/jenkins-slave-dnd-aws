@@ -49,7 +49,6 @@ else
 
   sudo dockerd \
          --host=unix:///var/run/docker.sock \
-         --storage-driver=overlay2 \
          $DOCKER_OPTS &
 
   exec java $JAVA_OPTS \
