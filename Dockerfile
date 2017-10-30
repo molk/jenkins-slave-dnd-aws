@@ -2,14 +2,6 @@ FROM docker:17.03.2-ce-dind
 
 MAINTAINER Marcus Olk <m@rcus-olk.net>
 
-ENV JENKINS_HOME /home/jenkins
-ENV JENKINS_REMOTNG_VERSION 3.9
-
-ENV JENKINS_GROUP 1000
-ENV DOCKER_GROUP  497
-
-ENV DOCKER_HOST unix:///var/run/docker.sock
-
 # install required packages
 RUN apk --update add \
     curl \
@@ -23,6 +15,17 @@ RUN apk --update add \
 # upgrade pip
 RUN pip install --upgrade pip setuptools
 
+# install aws cli
+RUN pip install awscli
+
+ENV JENKINS_HOME /home/jenkins
+ENV JENKINS_REMOTNG_VERSION 3.9
+
+ENV JENKINS_GROUP 1000
+ENV DOCKER_GROUP  497
+
+ENV DOCKER_HOST unix:///var/run/docker.sock
+
 # add jenkins user and allow jenkins user to run as root
 RUN    addgroup -g $DOCKER_GROUP  -S docker \
     && addgroup -g $JENKINS_GROUP -S jenkins \
@@ -32,9 +35,6 @@ RUN    addgroup -g $DOCKER_GROUP  -S docker \
     && chmod a+rwx $JENKINS_HOME \
     && echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/10-jenkins \
     && chmod 440 /etc/sudoers.d/10-jenkins 
-
-# install aws cli
-RUN pip install awscli
 
 # compatibility with CloudBees 'AWS CLI Plugin' which expects pip to be installed as user
 RUN mkdir -p /home/jenkins/.local/bin/ \
